@@ -467,7 +467,7 @@ Resources:
         Fn::Base64: |
           #!/bin/bash
           git clone https://github.com/dev-patel2104/GroceryList.git
-          cd /GroceryList/Term_Project/frontend
+          cd /Cloud-Computing/Term_Project/frontend
           sudo apt-get update
           sudo apt install npm -y
           sudo apt-get install -y awscli
