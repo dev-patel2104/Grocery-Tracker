@@ -1,0 +1,484 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Parameters: 
+  ApiName:
+    Type: String
+    Description: Name of the HTTP API
+
+Resources:
+  GroceryDynamoDBTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: GroceryData
+      AttributeDefinitions:
+        - AttributeName: email
+          AttributeType: S
+        - AttributeName: grocery_id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: email
+          KeyType: HASH
+        - AttributeName: grocery_id
+          KeyType: RANGE
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+
+  UserDynamoDBTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: UserData
+      AttributeDefinitions:
+        - AttributeName: email
+          AttributeType: S
+      KeySchema:
+        - AttributeName: email
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5  
+
+  GrocerySNSTopic:
+    Type: 'AWS::SNS::Topic'
+    Properties:
+      DisplayName: 'GroceryTopic'
+      TopicName: 'GroceryTopic'
+
+  GroceryAddLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: GroceryAdd
+      Handler: index.handler 
+      Role: arn:aws:iam::579043522960:role/LabRole 
+      Runtime: nodejs20.x  
+      Timeout: 60  
+      Code:
+        S3Bucket: code-b00934576
+        S3Key: grocery-add.zip 
+
+  GroceryAddLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt GroceryAddLambda.Arn
+      Principal: apigateway.amazonaws.com 
+
+  GroceryGetLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: GroceryGet
+      Handler: index.handler
+      Role: arn:aws:iam::579043522960:role/LabRole
+      Runtime: nodejs20.x
+      Timeout: 60
+      Code: 
+        S3Bucket: code-b00934576
+        S3Key: grocery-get.zip
+  
+  GroceryGetLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt GroceryGetLambda.Arn
+      Principal: apigateway.amazonaws.com 
+        
+  GroceryEditLambda:
+    Type: AWS::Lambda::Function
+    Properties: 
+      FunctionName: GroceryEdit
+      Handler: index.handler
+      Role: arn:aws:iam::579043522960:role/LabRole
+      Runtime: nodejs20.x
+      Timeout: 60
+      Code: 
+        S3Bucket: code-b00934576
+        S3Key: grocery-edit.zip
+
+  GroceryEditLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt GroceryEditLambda.Arn
+      Principal: apigateway.amazonaws.com 
+
+  GroceryDeleteLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: GroceryDelete
+      Handler: index.handler
+      Role: arn:aws:iam::579043522960:role/LabRole
+      Runtime: nodejs20.x
+      Timeout: 60
+      Code:
+        S3Bucket: code-b00934576
+        S3Key: grocery-delete.zip
+
+  GroceryDeleteLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt GroceryDeleteLambda.Arn
+      Principal: apigateway.amazonaws.com 
+
+  UserAddLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: UserAdd
+      Handler: index.handler 
+      Role: arn:aws:iam::579043522960:role/LabRole 
+      Runtime: nodejs20.x  
+      Timeout: 60  
+      Code:
+        S3Bucket: code-b00934576
+        S3Key: user-add.zip  
+  
+  UserAddLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt UserAddLambda.Arn
+      Principal: apigateway.amazonaws.com
+
+  UserGetByEmailLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: UserGetByEmail
+      Handler: index.handler
+      Role: arn:aws:iam::579043522960:role/LabRole
+      Runtime: nodejs20.x
+      Timeout: 60
+      Code: 
+        S3Bucket: code-b00934576
+        S3Key: user-get-by-email.zip
+
+  UserGetByEmailLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt UserGetByEmailLambda.Arn
+      Principal: apigateway.amazonaws.com
+
+  UserDeleteLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: UserDelete
+      Handler: index.handler
+      Role: arn:aws:iam::579043522960:role/LabRole
+      Runtime: nodejs20.x
+      Timeout: 60
+      Code:
+        S3Bucket: code-b00934576
+        S3Key: user-delete.zip
+  
+  UserDeleteLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt UserDeleteLambda.Arn
+      Principal: apigateway.amazonaws.com
+
+  ExpiryReminderLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: ExpiryReminder
+      Handler: index.handler
+      Role: arn:aws:iam::579043522960:role/LabRole
+      Runtime: nodejs20.x
+      Timeout: 60
+      Environment:
+        Variables:
+          sns: !Ref GrocerySNSTopic
+      Code: 
+        S3Bucket: code-b00934576
+        S3Key: expiry-reminder.zip
+
+  ExpiryReminderLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt ExpiryReminderLambda.Arn
+      Principal: apigateway.amazonaws.com
+  
+  SubscribeLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: Subscribe
+      Handler: index.handler
+      Role: arn:aws:iam::579043522960:role/LabRole
+      Runtime: nodejs20.x
+      Timeout: 60
+      Environment:
+        Variables:
+          sns: !Ref GrocerySNSTopic
+      Code: 
+        S3Bucket: code-b00934576
+        S3Key: subscribe.zip
+
+  SubscribeLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt SubscribeLambda.Arn
+      Principal: apigateway.amazonaws.com
+
+  ProjectApi:
+    Type: AWS::ApiGatewayV2::Api
+    Properties: 
+      Name: !Ref ApiName
+      ProtocolType: HTTP
+      CorsConfiguration:
+        AllowMethods:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+        AllowHeaders:
+          - '*'
+        AllowOrigins:
+          - '*'
+        ExposeHeaders:
+          - '*'
+
+  DefaultStage:
+    Type: AWS::ApiGatewayV2::Stage
+    Properties:
+      ApiId: !Ref ProjectApi
+      AutoDeploy: true
+      StageName: default
+
+  UserGetByEmailIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref ProjectApi
+      Description: Lambda proxy integration
+      IntegrationType: AWS_PROXY
+      IntegrationMethod: POST
+      PayloadFormatVersion: "2.0"
+      IntegrationUri: !GetAtt UserGetByEmailLambda.Arn
+
+  UserGetByEmailRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref ProjectApi
+      RouteKey: "GET /users/{email}"
+      AuthorizationType: NONE
+      Target: !Sub "integrations/${UserGetByEmailIntegration}"
+
+  UserAddIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref ProjectApi
+      Description: Lambda proxy integration
+      IntegrationType: AWS_PROXY
+      IntegrationMethod: POST
+      PayloadFormatVersion: "2.0"
+      IntegrationUri: !GetAtt UserAddLambda.Arn
+
+  UserAddRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref ProjectApi
+      RouteKey: "PUT /users"
+      AuthorizationType: NONE
+      Target: !Sub "integrations/${UserAddIntegration}"
+
+  UserDeleteIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref ProjectApi
+      Description: Lambda proxy integration
+      IntegrationType: AWS_PROXY
+      IntegrationMethod: POST
+      PayloadFormatVersion: "2.0"
+      IntegrationUri: !GetAtt UserDeleteLambda.Arn
+
+  UserDeleteRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties: 
+      ApiId: !Ref ProjectApi
+      RouteKey: "DELETE /users/{email}"
+      AuthorizationType: NONE
+      Target: !Sub "integrations/${UserDeleteIntegration}"
+
+  GroceryGetIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref ProjectApi
+      Description: Lambda proxy integration
+      IntegrationType: AWS_PROXY
+      IntegrationMethod: POST
+      PayloadFormatVersion: "2.0"
+      IntegrationUri: !GetAtt GroceryGetLambda.Arn
+
+  GroceryGetRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref ProjectApi
+      RouteKey: "GET /grocery/{email}"
+      AuthorizationType: NONE
+      Target: !Sub "integrations/${GroceryGetIntegration}"
+
+  GroceryAddIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref ProjectApi
+      Description: Lambda proxy integration
+      IntegrationType: AWS_PROXY
+      IntegrationMethod: POST
+      PayloadFormatVersion: "2.0"
+      IntegrationUri: !GetAtt GroceryAddLambda.Arn
+
+  GroceryAddRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref ProjectApi
+      RouteKey: "POST /grocery"
+      AuthorizationType: NONE
+      Target: !Sub "integrations/${GroceryAddIntegration}"
+
+  GroceryEditIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref ProjectApi
+      Description: Lambda proxy integration
+      IntegrationType: AWS_PROXY
+      IntegrationMethod: POST
+      PayloadFormatVersion: "2.0"
+      IntegrationUri: !GetAtt GroceryEditLambda.Arn
+
+  GroceryEditRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref ProjectApi
+      RouteKey: "PUT /grocery"
+      AuthorizationType: NONE
+      Target: !Sub "integrations/${GroceryEditIntegration}"
+
+  GroceryDeleteIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref ProjectApi
+      Description: Lambda proxy integration
+      IntegrationType: AWS_PROXY
+      IntegrationMethod: POST
+      PayloadFormatVersion: "2.0"
+      IntegrationUri: !GetAtt GroceryDeleteLambda.Arn
+
+  GroceryDeleteRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref ProjectApi
+      RouteKey: "DELETE /grocery/{grocery_id}"
+      AuthorizationType: NONE
+      Target: !Sub "integrations/${GroceryDeleteIntegration}"
+
+  ExpiryReminderIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref ProjectApi
+      Description: Lambda proxy integration
+      IntegrationType: AWS_PROXY
+      IntegrationMethod: POST
+      PayloadFormatVersion: "2.0"
+      IntegrationUri: !GetAtt ExpiryReminderLambda.Arn
+
+  ExpiryReminderRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref ProjectApi
+      RouteKey: "GET /expiry-reminder"
+      AuthorizationType: NONE
+      Target: !Sub "integrations/${ExpiryReminderIntegration}"
+
+  SubscribeIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref ProjectApi
+      Description: Lambda proxy integration
+      IntegrationType: AWS_PROXY
+      IntegrationMethod: POST
+      PayloadFormatVersion: "2.0"
+      IntegrationUri: !GetAtt SubscribeLambda.Arn
+
+  SubscribeRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref ProjectApi
+      RouteKey: "POST /subscribe"
+      AuthorizationType: NONE
+      Target: !Sub "integrations/${SubscribeIntegration}"
+
+  DailyTriggerEventBridgeRule:
+    Type: 'AWS::Events::Rule'
+    Properties:
+      Name: 'daily-timer'
+      Description: 'Trigger Lambda once every day'
+      ScheduleExpression: 'rate(1 day)'
+      State: 'ENABLED'
+      Targets: 
+        - Arn: !GetAtt ExpiryReminderLambda.Arn
+          Id: 'first'
+
+  FiveMinutesTriggerEventBridgeRule:
+    Type: 'AWS::Events::Rule'
+    Properties:
+      Name: 'five-minutes-timer'
+      Description: 'Trigger Lambda once every day'
+      ScheduleExpression: 'rate(5 minutes)'
+      State: 'ENABLED'
+      Targets: 
+        - Arn: !GetAtt ExpiryReminderLambda.Arn
+          Id: 'second'
+
+  securitygroupec2:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: "Grocery EC2"
+      GroupName: ec2securitygroup
+      SecurityGroupIngress:
+        - IpProtocol: -1
+          FromPort: 0
+          ToPort: 65535
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 3000
+          ToPort: 3000
+          CidrIp: 0.0.0.0/0
+
+  groceryec2:
+    Type: AWS::EC2::Instance
+    DependsOn:
+      - ProjectApi
+    Properties:
+      ImageId: ami-053b0d53c279acc90
+      InstanceType: t2.micro
+      KeyName: vockey
+      SecurityGroups:
+        - !Ref securitygroupec2
+      UserData:
+        Fn::Base64: |
+          #!/bin/bash
+          git clone https://github.com/dev-patel2104/GroceryList.git
+          cd /GroceryList/Term_Project/frontend
+          sudo apt-get update
+          sudo apt install npm -y
+          sudo apt-get install -y awscli
+          sudo apt-get install jq -y
+          aws configure set aws_access_key_id ASIAYNUNO7GIE4ZVAGPI
+          aws configure set aws_secret_access_key BIDWeKFdENEJAf5Kd7qWtvPPfvWn8bXd6ZFmEzyp
+          aws configure set aws_session_token FwoGZXIvYXdzECgaDP4+8WZWci1KuHvEASLAAVQpy/3TF32vVUjBY/8udWHiNIsnP/qCXhvCVZKlOq0SyPellyjmtY5fKWU1F3mn4vidwa6aSgGySGlj7U1SagWEws5aE4WYcuZmuIoe+yNSZ5pisFsjPgHH3nxKhHj4q4ZfiIwszBg1zRN4EXuaO4f7AGCe8ToyM1jVcDIdiYJ0mXGDtdgWxZ5qCB/Ksao/A4CEJRq743OQ2FMD/fdODqBnlmNMzsjI5PEKm3xMVNuWAbSFoNATsRtkdbggSIlsXCj5w76rBjItYVEywdCQoEQ1OnlvZgRomQVqa6bGyX62JVG0kEhO+R4S50DikhvJQLWnased
+          aws configure set region us-east-1
+          gatewayid=$(aws apigatewayv2 get-apis | jq -r '.Items[] | select(.Name=="ProjectApi") | .ApiId')
+          REACT_APP_API_GATEWAY_URL="REACT_APP_API_GATEWAY_URL=https://${gatewayid}.execute-api.us-east-1.amazonaws.com/default"
+          echo $REACT_APP_API_GATEWAY_URL >> .env
+          sudo /usr/bin/npm i
+          sudo /usr/bin/npm start
+
