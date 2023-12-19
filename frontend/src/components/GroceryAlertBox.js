@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 
 const GroceryAlertBox = ({ isAlertOpen, handleAlertClose, newItem, handleInputChange, handleFormSubmit }) => {
 
@@ -11,17 +11,6 @@ const GroceryAlertBox = ({ isAlertOpen, handleAlertClose, newItem, handleInputCh
         return true;
     };
 
-
-
-    // useEffect(() => {
-
-    //     const date = new Date(parseInt(newItem.expiry_date, 10));
-    //     const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    //     const day = date.getDate().toString().padStart(2, '0');
-    //     const year = date.getFullYear();
-    //     newItem.expiry_date = `${month}/${day}/${year}`;
-    //     //return `${month}/${day}/${year}`;
-    // }, [])
 
     return (
         <>

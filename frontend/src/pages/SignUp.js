@@ -64,6 +64,7 @@ function SignUp() {
             }
             else {
                 const res = await subscribe(user);
+                console.log(res);
                 localStorage.setItem('email', email);
                 navigate('/groceries');
             }
