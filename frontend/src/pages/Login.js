@@ -84,7 +84,7 @@ function Login() {
 
     return (
         <div className="flex flex-row w-screen bg-customBackground" style={{ height: '100vh' }}>
-            <div className='flex w-2/3 h-full justify-center items-center'>
+            <div className='flex flex-col w-2/3 h-full justify-center items-center gap-12'>
                 <img src={homeImage} alt="home" style={{ width: '85%', height: 'auto' }} />
             </div>
             <div className="flex flex-col justify-center items-center w-1/2" >

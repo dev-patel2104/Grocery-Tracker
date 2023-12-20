@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
+
 function Navbar() {
     const navigate = useNavigate();
 
@@ -14,10 +15,11 @@ function Navbar() {
 
     return (
         <div className='flex-row bg-navbar items-center' style={{ height: '8vh' }}>
-            <div className='pr-8 flex justify-end items-center h-full gap-20'>
+            <div className='pr-8 flex justify-between items-center h-full gap-20'>
+                <p className="text-carrara rounded-lg text-3xl font-bold pl-10 italic"> Groceryfy </p>
                 <button
                     onClick={handleLogout}
-                    className="text-text rounded-lg text-lg font-bold hover:bg-customBackground transition duration-300 py-1 px-4"
+                    className="text-carrara rounded-lg text-lg font-bold hover:bg-slate-600 transition duration-300 py-1 px-4"
                 >
                     Logout
                 </button>
