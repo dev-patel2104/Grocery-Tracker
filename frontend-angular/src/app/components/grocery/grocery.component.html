@@ -1,0 +1,33 @@
+<div class='mx-auto p-4 w-screen bg-customBackground' >
+    <div class='flex justify-center'>
+        <h1 class="text-3xl font-bold mb-4">Grocery Items</h1>
+    </div>
+
+    <!-- {/* To Buy Section */} -->
+    <div class='flex flex-col'>
+        <div class='flex flex-row justify-center items-center gap-5 my-4'>
+            <h2 class="text-2xl text-text font-bold">To Buy</h2>
+            <button class="shadow-md shadow-gray-400 rounded-md py-1 px-2 font-bold">
+                <fa-icon [icon]="faPlus" class="text-text transform hover:scale-150 transition-transform" />
+            </button>
+        </div>
+        <div class="flex flex-col gap-4 items-center">
+            <app-grocery-card class = "w-2/3" *ngFor="let grocery of toBuyItems" [grocery] = "grocery"></app-grocery-card>
+        </div>
+    </div>
+
+    <!-- {/* Bought Section */} -->
+    <div class='flex flex-col'>
+        <div class='flex flex-row justify-center items-center gap-5 mt-12 mb-4'>
+            <h2 class="text-2xl font-bold">Bought</h2>
+            <button class=" shadow-md shadow-gray-400 rounded-md py-1 px-2 font-bold">
+                <fa-icon  [icon]="faPlus" class="text-text transform hover:scale-150 transition-transform" />
+            </button>
+        </div>
+        <div class="flex flex-col gap-4 items-center">
+            <app-grocery-card class = "w-2/3" (onDeleteGrocery) = "deleteGrocery(grocery)" *ngFor="let grocery of boughtItems" [grocery] = "grocery"></app-grocery-card>
+
+        </div>
+    </div>
+
+</div>
