@@ -102,7 +102,7 @@ function GroceryList() {
     }, []);
 
     return (
-        <div className='mx-auto p-4 w-screen bg-customBackground h-full' style={{ height: '92vh' }} >
+        <div className='mx-auto p-4 w-screen bg-customBackground h-full' style={{ minHeight: '92vh', height: '100%' }} >
             <div className='flex justify-center'>
                 <h1 className="text-3xl font-bold mb-4">Grocery Items</h1>
             </div>
