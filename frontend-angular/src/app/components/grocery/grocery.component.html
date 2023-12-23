@@ -8,8 +8,8 @@
         <div class='flex flex-row justify-center items-center gap-5 my-4'>
             <h2 class="text-2xl text-text font-bold">To Buy</h2>
             <button (click)="showExpiry=false;setAlert(true)"
-                class="shadow-md shadow-gray-400 rounded-md py-1 px-2 font-bold">
-                <fa-icon [icon]="faPlus" class="text-text transform hover:scale-150 transition-transform" />
+                class="shadow-md shadow-gray-400 rounded-md py-1 px-2 font-bold transform hover:scale-125 transition-transform">
+                <fa-icon [icon]="faPlus" class="text-text  icon-style" />
             </button>
         </div>
         <div role="status" *ngIf="isLoading" class="flex flex-row w-screen justify-center pt-8 pb-8">
@@ -38,8 +38,8 @@
         <div class='flex flex-row justify-center items-center gap-5 mt-12 mb-4'>
             <h2 class="text-2xl font-bold">Bought</h2>
             <button (click)="showExpiry=true;setAlert(true)"
-                class=" shadow-md shadow-gray-400 rounded-md py-1 px-2 font-bold">
-                <fa-icon [icon]="faPlus" class="text-text transform hover:scale-150 transition-transform" />
+                class=" shadow-md shadow-gray-400 rounded-md py-1 px-2 font-bold transform hover:scale-125 transition-transform">
+                <fa-icon [icon]="faPlus" class="text-text icon-style" />
             </button>
         </div>
         <div role="status" *ngIf="isLoading" class="flex flex-row w-screen justify-center pt-8">
