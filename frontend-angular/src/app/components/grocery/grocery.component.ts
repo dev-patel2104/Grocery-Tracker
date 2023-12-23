@@ -33,8 +33,11 @@ export class GroceryComponent implements OnInit {
 
       this.groceryService.getGroceries(this.email).subscribe((groceries) => {
         this.groceries = groceries;
-        this.toBuyItems = groceries.filter((item) => item.status === 'To Buy');
-        this.boughtItems = groceries.filter((item) => item.status === 'Bought');
+        if (groceries) {
+          this.toBuyItems = groceries.filter((item) => item.status === 'To Buy');
+          this.boughtItems = groceries.filter((item) => item.status === 'Bought');
+          
+        }
         this.isLoading = false;
       }
       );
