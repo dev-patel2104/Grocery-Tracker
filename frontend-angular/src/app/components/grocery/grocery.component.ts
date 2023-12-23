@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { GroceryService } from '../../services/grocery.service';
-import { Grocery } from '../../Grocery';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { Grocery } from '../../Grocery';
+import { GroceryService } from '../../services/grocery.service';
 
 @Component({
   selector: 'app-grocery',
@@ -13,32 +13,37 @@ export class GroceryComponent implements OnInit {
   toBuyItems: Grocery[] = [];
   boughtItems: Grocery[] = [];
   email: string = '';
-  isLoading: boolean = false;
-  isAlertOpen : boolean = false;
-  showExpiry=false;
+  isLoading: boolean = true;
+  isAlertOpen: boolean = false;
+  showExpiry = false;
   faPlus = faPlus;
 
   constructor(private groceryService: GroceryService) { }
 
   ngOnInit(): void {
-    this.email = localStorage.getItem('email') || '';
+    if (typeof window !== 'undefined' && window.document) {
+      this.email = localStorage.getItem('email') || '';
+    }
     this.getGroceries();
   }
-  
-  private getGroceries() : void {
+
+  private getGroceries(): void {
     this.isLoading = true;
-    this.groceryService.getGroceries(this.email).subscribe((groceries) => {
-      this.groceries = groceries;
-      this.toBuyItems = groceries.filter((item) => item.status === 'To Buy');
-      this.boughtItems = groceries.filter((item) => item.status === 'Bought');
+    if (this.email != '') {
+
+      this.groceryService.getGroceries(this.email).subscribe((groceries) => {
+        this.groceries = groceries;
+        this.toBuyItems = groceries.filter((item) => item.status === 'To Buy');
+        this.boughtItems = groceries.filter((item) => item.status === 'Bought');
+        this.isLoading = false;
+      }
+      );
     }
-    );
-    this.isLoading = false;
   }
-  
-  deleteGrocery(grocery: Grocery): void { 
+
+  deleteGrocery(grocery: Grocery): void {
     this.groceryService.deleteGrocery(grocery).subscribe((response) => {
-          
+
       this.groceries = this.groceries.filter((item) => item.grocery_id !== grocery.grocery_id);
       this.toBuyItems = this.groceries.filter((item) => item.status === 'To Buy');
       this.boughtItems = this.groceries.filter((item) => item.status === 'Bought');
@@ -46,16 +51,16 @@ export class GroceryComponent implements OnInit {
     })
   }
 
-  addGrocery(grocery : Grocery) : void {
+  addGrocery(grocery: Grocery): void {
     console.log(grocery);
     grocery.email = this.email;
     this.groceryService.addGrocery(grocery).subscribe((response) => {
       console.log(response);
-      this.getGroceries(); 
+      this.getGroceries();
     })
   }
 
-  setAlert(value:boolean) : void {
+  setAlert(value: boolean): void {
     console.log("Inside toggle");
     this.isAlertOpen = value;
   }

@@ -7,7 +7,7 @@
     <div class="flex w-full ">
         <div class="flex flex-col w-full justify-between">
             <p class="text-customBackground font-semibold text-md">Quantity: {{grocery.quantity}}</p>
-            <!-- {expiry_date && <p class="text-customBackground font-semibold text-md">Expiry Date: {formatDate(expiry_date)}</p>} -->
+            <p class="text-customBackground font-semibold text-md" *ngIf = "grocery.expiry_date">Expiry Date: {{ grocery.expiry_date | date:"MMM dd, yyyy"}}</p>
         </div>
         <div class='flex gap-4 items-center'>
             <fa-icon (click) = "setAlert(true)" [icon]="faEdit" class='transform hover:scale-125 transition-transform icon-style' />
