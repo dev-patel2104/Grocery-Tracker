@@ -10,8 +10,6 @@ import { AppComponent } from './app.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { GroceryAlertBoxComponent } from './components/grocery-alert-box/grocery-alert-box.component';
 import { GroceryCardComponent } from './components/grocery-card/grocery-card.component';
-import { GroceryCardSkeletonComponent } from './components/grocery-card-skeleton/grocery-card-skeleton.component';
-import { GroceryListComponent } from './components/grocery-list/grocery-list.component';
 import { GroceryComponent } from './components/grocery/grocery.component';
 import { SignInComponent } from './components/sign-in/sign-in.component';
 import { SignUpComponent } from './components/sign-up/sign-up.component';
@@ -42,8 +40,6 @@ const appRoutes: Routes = [
     NavbarComponent,
     GroceryAlertBoxComponent,
     GroceryCardComponent,
-    GroceryCardSkeletonComponent,
-    GroceryListComponent,
     GroceryComponent,
     SignInComponent,
     SignUpComponent,
@@ -63,4 +59,5 @@ const appRoutes: Routes = [
   ],
   bootstrap: [AppComponent]
 })
+
 export class AppModule { }
