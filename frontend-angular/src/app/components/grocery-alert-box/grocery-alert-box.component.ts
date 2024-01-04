@@ -20,14 +20,7 @@ export class GroceryAlertBoxComponent implements OnInit {
   expiry_date: string = "";
 
   ngOnInit(): void {
-    // if(this.grocery!=null){
-    //   this.name=this.grocery.name;
-    //   this.category =this.grocery.category ;
-    //   this.quantity =this.grocery.quantity ;
-    //   this.status =this.grocery.status ;
-    //   this.expiry_date =this.grocery.expiry_date ;
-
-    // }
+   
     console.log(this.grocery);
     try{
       if (this.grocery && this.grocery.expiry_date!='') {
@@ -50,15 +43,7 @@ export class GroceryAlertBoxComponent implements OnInit {
       return;
     }
     console.log(this.name);
-    // const newGrocery = {
-    //   grocery_id: '',
-    //   name: this.name,
-    //   category: this.category,
-    //   quantity: this.quantity,
-    //   status: this.status,
-    //   expiry_date: this.expiry_date,
-    //   email: ''
-    // };
+   
 
     this.onAddGrocery.emit(this.grocery);
     this.closeDialog();
@@ -75,16 +60,7 @@ export class GroceryAlertBoxComponent implements OnInit {
       return;
     }
     console.log(this.grocery.name);
-    // const newGrocery:Grocery = {
-    //   grocery_id: '',
-    //   name: this.name,
-    //   category: this.category,
-    //   quantity: this.quantity,
-    //   status: this.status,
-    //   expiry_date: this.expiry_date,
-    //   email: ''
-    // };
-
+   
     this.onUpdateGrocery.emit(this.grocery);
     this.closeDialog();
   }

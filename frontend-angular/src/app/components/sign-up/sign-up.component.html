@@ -26,7 +26,6 @@
           <div *ngIf=" validatePassword() === false && password !== ''" class='text-red-600'> Password must be minimum of
             8 characters </div>
   
-          <!-- {{ password.length < minPasswordLength && password !== '' && <p class='text-red-600'> Password must be minimum of 8 characters </p> }} -->
           <p class="text-sm ">
             Already have an account?
             <a [routerLink]="'/'">
